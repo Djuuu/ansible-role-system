@@ -1,0 +1,34 @@
+---
+
+- name: "firewalld: Configure services" # noqa: name[casing]
+  ansible.builtin.copy:
+    src: "{{ _service }}"
+    dest: "/etc/firewalld/services/"
+    mode: '0644'
+  with_fileglob: "{{ playbook_dir }}/config/system/{{ inventory_hostname }}/firewalld/services/*.xml"
+  loop_control:
+    loop_var: _service
+  become: true
+  notify: Reload firewalld
+
+- name: "firewalld: Configure ipsets" # noqa: name[casing]
+  ansible.builtin.copy:
+    src: "{{ _ipset }}"
+    dest: "/etc/firewalld/ipsets/"
+    mode: '0644'
+  with_fileglob: "{{ playbook_dir }}/config/system/{{ inventory_hostname }}/firewalld/ipsets/*.xml"
+  loop_control:
+    loop_var: _ipset
+  become: true
+  notify: Reload firewalld
+
+- name: "firewalld: Configure zones" # noqa: name[casing]
+  ansible.builtin.copy:
+    src: "{{ _zone }}"
+    dest: "/etc/firewalld/zones/"
+    mode: '0644'
+  with_fileglob: "{{ playbook_dir }}/config/system/{{ inventory_hostname }}/firewalld/zones/*.xml"
+  loop_control:
+    loop_var: _zone
+  become: true
+  notify: Reload firewalld

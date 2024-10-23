@@ -1,0 +1,11 @@
+---
+
+- name: "fail2ban: Configure local jail conf" # noqa: name[casing]
+  ansible.builtin.copy:
+    content: "{{ system_fail2ban_jail_local }}"
+    dest: /etc/fail2ban/jail.d/local.conf
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify: Restart fail2ban

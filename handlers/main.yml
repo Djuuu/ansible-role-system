@@ -1,0 +1,28 @@
+---
+
+- name: "Restart fail2ban"
+  ansible.builtin.service:
+    name: fail2ban
+    state: restarted
+  become: true
+
+
+- name: "Reload firewalld"
+  ansible.builtin.command: firewall-cmd --reload
+  become: true
+  changed_when: true
+
+
+- name: "Restart ssh"
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+  become: true
+
+
+- name: "Restart journald"
+  ansible.builtin.service:
+    name: systemd-journald
+    state: restarted
+  become: true
+  changed_when: true

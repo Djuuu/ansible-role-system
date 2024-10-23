@@ -1,0 +1,7 @@
+---
+
+- name: "Ensure go package is installed: {{ go_package }}"
+  ansible.builtin.command: "go install {{ go_package }}"
+  register: _out
+  changed_when: _out.stderr_lines | default([]) | length > 0
+  become: "{{ become | default(false) }}"

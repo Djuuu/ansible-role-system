@@ -1,0 +1,34 @@
+---
+dependencies: []
+
+galaxy_info:
+  namespace: djuuu
+  role_name: system
+  author: Julien Tardot
+  description: Miscellaneous system init stuff (base configuration, packages, users, ...).
+
+  issue_tracker_url: https://github.com/Djuuu/ansible-role-system
+
+  license: Beerware
+
+  min_ansible_version: '2.9'
+
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags:
+    - linux
+    - system
+    - users
+    - opkg
+    - pip
+    - go
+    - ssh
+    - firewalld
+    - fail2ban
+    - journald

@@ -1,0 +1,50 @@
+---
+
+- name: "SSH: Ensure port 22 is used"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^[# ]*Port 22$'
+    line: Port 22
+    state: present
+  become: true
+  notify: Restart ssh
+
+- name: "SSH: Ensure custom port is used: {{ system_ssh_custom_port | default('') }}"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^[# ]*Port {{ system_ssh_custom_port }}"
+    insertafter: '^[# ]*Port 22$'
+    line: "Port {{ system_ssh_custom_port }}"
+    state: present
+  become: true
+  when: system_ssh_custom_port
+  notify: Restart ssh
+
+- name: "SSH: Ensure password authentication is disabled"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^[# ]*PasswordAuthentication (yes|no)$'
+    line: "PasswordAuthentication {{ system_ssh_password_authentication | default(false) | ternary('yes', 'no') }}"
+    state: present
+  become: true
+  notify: Restart ssh
+
+- name: "SSH: Ensure keyboard interactive authentication is disabled"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^[# ]*KbdInteractiveAuthentication (yes|no)$'
+    line: KbdInteractiveAuthentication no
+    state: present
+  become: true
+  notify: Restart ssh
+
+- name: "SSH: Ensure custom configuration"
+  ansible.builtin.blockinfile:
+    path: /etc/ssh/sshd_config
+    append_newline: true
+    prepend_newline: true
+    block: "{{ system_ssh_custom_config }}"
+    validate: /usr/sbin/sshd -T -f %s
+  become: true
+  notify: Restart ssh
+  when: system_ssh_custom_config

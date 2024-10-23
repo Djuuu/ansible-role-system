@@ -1,0 +1,26 @@
+---
+
+- name: Set hostname
+  ansible.builtin.include_tasks: set-hostname.yml
+
+- name: Set timezone
+  ansible.builtin.include_tasks: set-timezone.yml
+
+- name: Init users
+  ansible.builtin.include_tasks: init-users.yml
+  tags: ["users"]
+
+- name: Init packages
+  ansible.builtin.include_tasks: init-packages.yml
+  tags: ["packages"]
+
+
+- name: Include configuration tasks
+  ansible.builtin.include_tasks:
+    file: "tasks/configure/{{ _conf }}.yml"
+    apply:
+      tags: ["config", "configure", "config-{{ _conf }}", "configure-{{ _conf }}"]
+  tags: ["always"]
+  loop: "{{ system_configure }}"
+  loop_control:
+    loop_var: _conf

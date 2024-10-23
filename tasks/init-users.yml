@@ -1,0 +1,41 @@
+---
+
+- name: Init users
+  environment: "{{ system_env | default({}) }}"
+  become: true
+  tags: ["users"]
+  block:
+
+    - name: Init Users
+      ansible.builtin.user:
+        name:   "{{ item.name }}"
+        group:  "{{ item.group  | default(omit) }}"
+        groups: "{{ item.groups | default(omit) }}"
+
+        home:             "{{ item.home              | default(omit) }}"
+        shell:            "{{ item.shell             | default('/bin/bash') }}"
+        generate_ssh_key: "{{ item.generate_ssh_key  | default(false) }}"
+      loop: "{{ system_users | default([]) }}"
+
+    - name: Init sudoers
+      community.general.sudoers:
+        name: "{{ item.name }}"
+        user: "{{ item.name }}"
+        runas: "ALL:ALL"
+        nopassword: true
+        commands: ALL
+        state: "{{ ('sudo' in (item.groups | default([]))) | ternary('present', 'absent') }}"
+      loop: "{{ system_users | default([]) }}"
+
+    - name: Delete sudoers
+      community.general.sudoers:
+        name: "{{ item.name | default(item) }}"
+        state: absent
+      loop: "{{ system_users_deleted | default([]) }}"
+
+    - name: Delete Users
+      ansible.builtin.user:
+        name:  "{{ item.name | default(item) }}"
+        state: absent
+        remove: true
+      loop: "{{ system_users_deleted | default([]) }}"

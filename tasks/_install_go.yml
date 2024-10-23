@@ -1,0 +1,41 @@
+---
+
+- name: Check go install
+  ansible.builtin.command: /usr/local/go/bin/go version
+  register: _version
+  failed_when: false
+  changed_when: false
+
+- name: Register current version
+  ansible.builtin.set_fact:
+    target_version_installed: "{{ 'go version go' ~ system_install_go_version in _version.stdout }}"
+
+- name: Install go
+  when: not target_version_installed
+  vars:
+    go_pkg_name: "go{{
+        system_install_go_version
+      }}.{{
+        ansible_facts['system'] | lower
+      }}-{{
+        system_go_arch_mapping[ansible_facts['architecture']] | default('amd64')
+      }}.tar.gz"
+    go_pkg_url: "https://go.dev/dl/{{ go_pkg_name }}"
+
+  block:
+
+    - name: "Install go {{ system_install_go_version }}"
+      ansible.builtin.shell: |
+        set -e
+        wget -q -P /tmp {{ go_pkg_url }}
+        rm -rf /usr/local/go
+        tar -C /usr/local -xzf /tmp/{{ go_pkg_name }}
+        /usr/local/go/bin/go version
+      register: _out
+      changed_when: true
+
+    - name: Show go install result
+      ansible.builtin.debug:
+        msg:
+          - "{{ _out.stdout_lines }}"
+          - "{{ _out.stderr_lines }}"

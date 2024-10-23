@@ -1,0 +1,15 @@
+---
+
+- name: "journald: configure" # noqa: name[casing]
+  community.general.ini_file:
+    path: "/etc/systemd/journald.conf"
+    section: "Journal"
+    option: "{{ ini_item.key }}"
+    value:  "{{ ini_item.value }}"
+    no_extra_spaces: true
+    mode: '0644'
+  loop: "{{ system_journald | default({}) | dict2items }}"
+  loop_control:
+    loop_var: ini_item
+  become: true
+  notify: Restart journald

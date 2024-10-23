@@ -1,0 +1,136 @@
+---
+
+system_hostname: myhost
+
+system_timezone: UTC
+
+system_users: []
+#  - name: alice
+#  - name: bob
+#    group: users
+#  - name: carl
+#    groups: [ sudo, docker ]
+#    home: /home/coral
+#    shell: /bin/zsh
+#    generate_ssh_key: true
+
+system_users_deleted: []
+#  - name: daniel
+#  - elmo
+
+system_packages: []
+#  - fail2ban
+#  - firewalld
+#  - dnsutils
+#  - net-tools
+
+# OPKG packages
+system_packages_opkg: []
+#  - git
+#  - git-http
+#  - grep
+#  - htop
+
+# Python pip packages
+system_packages_pip: []
+#  - python-dateutil
+#  - requests
+
+# Go / Go packages
+system_install_go_version:
+system_packages_go: []
+#  - github.com/jesseduffield/lazygit@latest
+#  - github.com/jesseduffield/lazydocker@latest
+
+# Additional roles
+system_required_roles: []
+#  - geerlingguy.docker
+
+
+system_configure: []
+#  - ssh       # tasks/configure/ssh.yml
+#  - firewalld # tasks/configure/firewalld.yml
+#  - fail2ban  # tasks/configure/fail2ban.yml
+#  - journald  # tasks/configure/journald.yml
+
+# Optional additional custom port
+system_ssh_custom_port:
+# Allow password authentication
+system_ssh_password_authentication: false
+# Custom sshd configuration
+system_ssh_custom_config: |
+  #
+
+# Default fail2ban bantime
+system_fail2ban_jail_bantime: 1h
+# Default fail2ban maxretry
+system_fail2ban_jail_maxretry: 10
+# Default fail2ban local configuration
+system_fail2ban_jail_local: |
+  [DEFAULT]
+
+  # "bantime" is the number of seconds that a host is banned.
+  bantime  = {{ system_fail2ban_jail_bantime }}
+
+  # "maxretry" is the number of failures before a host get banned.
+  maxretry = {{ system_fail2ban_jail_maxretry }}
+
+  # https://github.com/fail2ban/fail2ban/issues/3292
+  # Debian 12 has no log files, just journalctl
+  backend = systemd
+
+  # Destination email address used solely for the interpolations in
+  # jail.{conf,local} configuration files.
+  destemail = root@localhost
+
+  # Sender email address used solely for some actions
+  sender = root@<fq-hostname>
+
+  [sshd]
+  enabled = true
+  mode    = ddos
+  port    = ssh{{
+  system_ssh_custom_port | default('') | ternary(
+  ',' ~ system_ssh_custom_port, ''
+  ) }}
+
+  [selinux-ssh]
+  enabled = true
+  port    = ssh{{
+  system_ssh_custom_port | default('') | ternary(
+  ',' ~ system_ssh_custom_port, ''
+  ) }}
+
+# Journald configuration
+system_journald: {}
+#  # Defaults:
+#  Storage:              auto
+#  Compress:             yes
+#  Seal:                 yes
+#  SplitMode:            uid
+#  SyncIntervalSec:      5m
+#  RateLimitIntervalSec: 30s
+#  RateLimitBurst:       10000
+#  SystemMaxUse:
+#  SystemKeepFree:
+#  SystemMaxFileSize:
+#  SystemMaxFiles:       100
+#  RuntimeMaxUse:
+#  RuntimeKeepFree:
+#  RuntimeMaxFileSize:
+#  RuntimeMaxFiles:      100
+#  MaxRetentionSec:
+#  MaxFileSec:           1month
+#  ForwardToSyslog:      yes
+#  ForwardToKMsg:        no
+#  ForwardToConsole:     no
+#  ForwardToWall:        yes
+#  TTYPath:              /dev/console
+#  MaxLevelStore:        debug
+#  MaxLevelSyslog:       debug
+#  MaxLevelKMsg:         notice
+#  MaxLevelConsole:      info
+#  MaxLevelWall:         emerg
+#  LineMax:              48K
+#  ReadKMsg:             yes
+#  Audit:                no

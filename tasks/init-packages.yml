@@ -1,0 +1,45 @@
+---
+
+- name: Init packages
+  environment: "{{ system_env | default({}) }}"
+  become: true
+  tags: ["packages"]
+  block:
+
+    - name: Ensure packages are installed
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ system_packages | default([]) }}"
+
+    - name: Ensure packages are installed (opkg)
+      community.general.opkg:
+        name: "{{ item }}"
+        state: present
+        update_cache: "{{ item_idx == 0 }}"
+      loop: "{{ system_packages_opkg | default([]) }}"
+      loop_control:
+        index_var: item_idx
+
+    - name: Ensure packages are installed (pip)
+      ansible.builtin.pip:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ system_packages_pip | default([]) }}"
+
+    - name: Ensure packages are installed (roles)
+      ansible.builtin.include_role:
+        name: "{{ _role }}"
+      loop: "{{ system_required_roles | default([]) }}"
+      loop_control:
+        loop_var: _role
+
+    - name: Ensure go is installed
+      when: system_install_go_version | default(false)
+      ansible.builtin.include_tasks: _install_go.yml
+
+    - name: Ensure packages are installed (go)
+      ansible.builtin.include_tasks: _install_go_package.yml
+      loop: "{{ system_packages_go | default([]) }}"
+      loop_control:
+        loop_var: go_package
