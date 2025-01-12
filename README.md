@@ -186,6 +186,26 @@ system_journald: {}
 #  Audit:                no
 ```
 
+Mount configuration
+
+```yaml
+# Mount options
+system_mounts: []
+#  - src: "//my-server/example"
+#    path: "/mount/example"
+#    fstype: cifs
+#    state: mounted
+#    opts: "uid=1234,gid=123,file_mode=0664,dir_mode=0775,rw,nodev,nosuid,noexec,credentials=/home/admin/.credentials,iocharset=utf8"
+#    opts_no_log: true
+
+# Mount credentials files
+system_mount_credential_files: []
+#  - dest: /home/admin/.credentials
+#    content: |
+#      username=me
+#      password=s3cr3t
+```
+
 Additional config files
 -----------------------
 

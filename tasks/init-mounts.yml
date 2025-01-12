@@ -1,0 +1,30 @@
+---
+
+- name: Init mounts
+  environment: "{{ system_env | default({}) }}"
+  become: true
+  tags: ["mounts"]
+  block:
+
+    - name: Init credentials files
+      loop: "{{ system_mount_credential_files | default([]) }}"
+      loop_control:
+        loop_var: _cred
+      ansible.builtin.copy:
+        content: "{{ _cred.content }}"
+        dest: "{{ _cred.dest }}"
+        owner: "{{ _cred.owner | default(ansible_user) }}"
+        group: "{{ _cred.group | default(ansible_user) }}"
+        mode: "{{ _cred.mode | default('0600') }}"
+
+    - name: Mount volumes
+      loop: "{{ system_mounts | default([]) }}"
+      loop_control:
+        loop_var: _mount
+      ansible.posix.mount:
+        src: "{{ _mount.src }}"
+        path: "{{ _mount.path }}"
+        opts: "{{ _mount.opts }}"
+        fstype: "{{ _mount.fstype }}"
+        state: "{{ _mount.state | default('mounted') }}"
+        opts_no_log: "{{ _mount.opts_no_log | default(false) }}"
