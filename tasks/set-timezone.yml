@@ -10,5 +10,5 @@
         name: "{{ system_timezone }}"
       when:
         - system_timezone is defined
-        - ansible_facts['os_family'] in ['Archlinux', 'Debian', 'FreeBSD', 'RedHat', 'Suse']
+        - ansible_facts['os_family'] in ['Alpine', 'Archlinux', 'Debian', 'FreeBSD', 'RedHat', 'Suse']
       ignore_errors: true
