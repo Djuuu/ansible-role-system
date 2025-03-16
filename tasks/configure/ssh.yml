@@ -20,7 +20,7 @@
   when: system_ssh_custom_port
   notify: Restart ssh
 
-- name: "SSH: Ensure password authentication is disabled"
+- name: "SSH: Ensure password authentication is {{ system_ssh_password_authentication | default(false) | ternary('enabled', 'disabled') }}"
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^[# ]*PasswordAuthentication (yes|no)$'
