@@ -16,7 +16,7 @@ Role Variables
 Base settings:
 
 ```yaml
-system_hostname: myhost
+#system_hostname: myhost
 
 system_timezone: UTC
 ```

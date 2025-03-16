@@ -1,6 +1,6 @@
 ---
 
-system_hostname: myhost
+# system_hostname: myhost
 
 system_timezone: UTC
 
