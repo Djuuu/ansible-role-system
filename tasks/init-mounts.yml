@@ -16,6 +16,7 @@
         owner: "{{ _cred.owner | default(ansible_user) }}"
         group: "{{ _cred.group | default(ansible_user) }}"
         mode: "{{ _cred.mode | default('0600') }}"
+      no_log: true
 
     - name: Mount volumes
       loop: "{{ system_mounts | default([]) }}"
