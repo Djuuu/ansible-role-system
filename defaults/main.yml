@@ -18,6 +18,12 @@ system_users_deleted: []
 #  - name: daniel
 #  - elmo
 
+system_groups: []
+#  - name: users
+#  - name: admins
+#    gid: 987
+#    system: true
+
 system_packages: []
 #  - fail2ban
 #  - firewalld
