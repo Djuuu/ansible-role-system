@@ -39,6 +39,16 @@ system_users_deleted: []
 #  - elmo
 ```
 
+Groups:
+
+```yaml
+system_groups: []
+#  - name: users
+#  - name: admins
+#    gid: 987
+#    system: true
+```
+
 System packages (ex: apt):
 
 ```yaml
