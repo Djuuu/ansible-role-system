@@ -25,6 +25,7 @@
       ansible.builtin.pip:
         name: "{{ item }}"
         state: present
+        break_system_packages: "{{ system_packages_pip_break_system_packages | default(false) }}"
       loop: "{{ system_packages_pip | default([]) }}"
 
     - name: Ensure packages are installed (roles)
@@ -35,7 +36,7 @@
         loop_var: _role
 
     - name: Ensure go is installed
-      when: system_install_go_version | default(false)
+      when: system_install_go_version is truthy
       ansible.builtin.include_tasks: _install_go.yml
 
     - name: Ensure packages are installed (go)

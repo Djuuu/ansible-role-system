@@ -75,6 +75,9 @@ Python pip packages:
 system_packages_pip: []
 #  - python-dateutil
 #  - requests
+
+# Use pip --break-system-packages option
+system_packages_pip_break_system_packages: false
 ```
 
 Go / Go packages:  
