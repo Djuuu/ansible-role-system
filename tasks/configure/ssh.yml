@@ -17,7 +17,7 @@
     line: "Port {{ system_ssh_custom_port }}"
     state: present
   become: true
-  when: system_ssh_custom_port
+  when: system_ssh_custom_port is truthy
   notify: Restart ssh
 
 - name: "SSH: Ensure password authentication is {{ system_ssh_password_authentication | default(false) | ternary('enabled', 'disabled') }}"
@@ -39,12 +39,10 @@
   notify: Restart ssh
 
 - name: "SSH: Ensure custom configuration"
-  ansible.builtin.blockinfile:
-    path: /etc/ssh/sshd_config
-    append_newline: true
-    prepend_newline: true
-    block: "{{ system_ssh_custom_config }}"
-    validate: /usr/sbin/sshd -T -f %s
+  ansible.builtin.copy:
+    content: "{{ item.content }}"
+    dest: "/etc/ssh/sshd_config.d/{{ item.file }}"
+    mode: '0644'
+  loop: "{{ system_ssh_custom_config | default([], true) }}"
   become: true
   notify: Restart ssh
-  when: system_ssh_custom_config

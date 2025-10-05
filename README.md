@@ -111,8 +111,12 @@ system_ssh_custom_port:
 # Allow password authentication
 system_ssh_password_authentication: false
 # Custom sshd configuration
-system_ssh_custom_config: |
-  # 
+system_ssh_custom_config:
+#  - file: 99-custom.conf
+#    content: |
+#      # Fix SSH freezing on Wifi
+#      IPQoS cs0 cs0
+#      #IPQoS throughput
 ```
 
 Fail2ban configuration (used when `system_configure` contains `fail2ban`):
